@@ -98,6 +98,6 @@ func TestGetByIDNotFound(t *testing.T) {
 
 	_, err := s.GetByID(1)
 	if err != ErrNotFound {
-		t.Errorf("expected ErrNotFound when getting trying to retrieve products without ever having created any")
+		t.Errorf("expected ErrNotFound while trying to retrieve products without ever having created any")
 	}
 }
