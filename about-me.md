@@ -1,8 +1,3 @@
-Your name and program of study
-• Experience with Go and Git
-• What you expect to learn
-• Why CD matters for agile teams
-
 - Florian Neugebauer, MC Master
 - Almost no experience with Go, only for a small benchmarking test once
 - Some Git experience but never did a rebase for example
