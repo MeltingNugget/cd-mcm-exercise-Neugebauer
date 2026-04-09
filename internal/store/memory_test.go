@@ -8,7 +8,6 @@ import (
 
 func TestCreateAndGet(t *testing.T) {
 	s := NewMemoryStore()
-	// TODO: Add test -- create a product and verify GetByID returns it
 	product := s.Create(model.Product{Name: "Test Product", Price: 9.99})
 	retrieved, err := s.GetByID(product.ID)
 	if err != nil {
@@ -35,10 +34,8 @@ func TestDeleteNonExistent(t *testing.T) {
 	}
 }
 
-// TODO: Add tests for Update, Delete of existing product, and GetByID with invalid ID
 func TestUpdateProduct(t *testing.T) {
 	s := NewMemoryStore()
-	// TODO: Add test -- create a product and verify GetByID returns it
 	product := s.Create(model.Product{Name: "Test Product", Price: 9.99})
 
 	update := model.Product{Name: "Updated Product", Price: 19.99}
@@ -58,7 +55,6 @@ func TestUpdateProduct(t *testing.T) {
 
 func TestDeleteProduct(t *testing.T) {
 	s := NewMemoryStore()
-	// TODO: Add test -- create a product and verify GetByID returns it
 	product := s.Create(model.Product{Name: "Test Product", Price: 9.99})
 
 	err := s.Delete(product.ID)
