@@ -1,3 +1,5 @@
+# About me
+
 - Florian Neugebauer, MC Master
 - Almost no experience with Go, only for a small benchmarking test once
 - Some Git experience but never did a rebase for example
