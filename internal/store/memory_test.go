@@ -8,6 +8,31 @@ import (
 
 func TestCreateAndGet(t *testing.T) {
 	s := NewMemoryStore()
+
+	tests := []struct {
+		name string
+		id   int
+	}{
+		{"case 1", 1},
+		{"case 2", 3},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			product := s.Create(model.Product{Name: tt.name, ID: tt.id})
+			retrieved, err := s.GetByID(product.ID)
+			if err != nil {
+				t.Fatalf("expected no error, got %v", err)
+			}
+			if retrieved.ID != product.ID {
+				t.Errorf("retrieved product does not match created product")
+			}
+			if tt.name == "case 2" && retrieved.ID != 2 { // product.ID is manually set to 3 but the store should assign ID 2 due to auto increment
+				t.Errorf("retrieved product ID does not match expected ID")
+			}
+		})
+	}
+
 	product := s.Create(model.Product{Name: "Test Product", Price: 9.99})
 	retrieved, err := s.GetByID(product.ID)
 	if err != nil {
