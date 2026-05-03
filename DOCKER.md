@@ -1,3 +1,5 @@
+# Dockerfile lines commented
+
 ```FROM golang:1.26-alpine AS builder```
 Alpine versions are minimal low profile versions of Linux, which is why they are widely used for Docker images. Here in this line, a specific version distributed by golang is used and given a name to be reusable later on. 
 
@@ -43,3 +45,14 @@ Simply says "this container uses port 8080.".
 I believe this sets an entry point that is started automatically every time the container is started. In this case, it is the binary copied two steps before this.
 
 After this, all previous stages are discarded and the docker container only consists of the extremely small alpine and the code compiled in the previous build stage but without all the megabytes of build dependencies from that image.
+
+# CGO_ENBALED=0
+By default, CGO_ENABLED is set to 1 and therefore enabled. Some GO-functions are available as C equivalents depending on the library present on the OS where the binaries are built. If CGO is enabled, those native equivalents are linked and used instead of the GO-functions, which means an OS with different C-libraries than the OS that built the binaries would not be able to run those.
+
+GOOS sets the target to Linux, as GO supports cross compilation. In combination with disabling CGO, the build will be able to run on any Linux distro.
+
+# Size comparison
+## Multi Stage
+![alt text](./docker-md-imgs/image.png)
+## Single Stage
+![alt text](./docker-md-imgs/image-1.png)
