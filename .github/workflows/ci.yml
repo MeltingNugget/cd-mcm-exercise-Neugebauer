@@ -45,12 +45,15 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Lowercase owner
+        run: echo "OWNER=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/product-catalog:${{ github.sha }}
+          tags: ghcr.io/${{ env.OWNER }}/product-catalog:${{ github.sha }}
 
       # - name: Build Docker image
       #   run: docker build -t product-catalog:${{ github.sha }} .
