@@ -1,3 +1,5 @@
+[![CI](https://github.com/MeltingNugget/cd-mcm-exercise-Neugebauer/actions/workflows/ci.yml/badge.svg?branch=exercise%2F02-microservice-docker)](https://github.com/MeltingNugget/cd-mcm-exercise-Neugebauer/actions/workflows/ci.yml)
+
 # Exercise 2: Microservice Architecture, Docker & GitHub Actions
 
 **Course:** Continuous Delivery in Agile Software Development (Master)
@@ -81,7 +83,6 @@ The CI workflow (`.github/workflows/ci.yml`) has a `TODO` for a Docker build job
    - (Bonus) Pushes to GitHub Container Registry if on `main` branch
 
 2. **Add a build badge** to your README showing the CI status.
-   - [![CI](https://github.com/MeltingNugget/cd-mcm-exercise-Neugebauer/actions/workflows/ci.yml/badge.svg?branch=exercise%2F02-microservice-docker)](https://github.com/MeltingNugget/cd-mcm-exercise-Neugebauer/actions/workflows/ci.yml)
 
 **Deliverable:** Working CI pipeline (green check on your PR). Screenshot of the Actions run.
 
