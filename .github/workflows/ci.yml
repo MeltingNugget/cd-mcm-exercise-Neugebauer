@@ -17,11 +17,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Run golangci-lint
-        uses: golangci/golangci-lint-action@v4
-        with:
-          args: --config .golangci.yml
-
       - name: Set up Go ${{ matrix.go-version }}
         uses: actions/setup-go@v5
         with:
@@ -29,6 +24,11 @@ jobs:
 
       - name: Download dependencies
         run: go mod download
+
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v4
+        with:
+          args: --config .golangci.yml
 
       - name: Run tests with coverage
         run: go test -v -coverprofile=coverage.out ./...
