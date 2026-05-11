@@ -11,9 +11,34 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: ["1.24"]
+        go-version: ["1.25, 1.26"]
         os: [ubuntu-latest, macos-latest]
 
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go ${{ matrix.go-version }}
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go-version }}
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Run tests with coverage
+        run: go test -v -coverprofile=coverage.out ./...
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ matrix.go-version }}
+          path: coverage.out
+
+      - name: Build
+        run: go build -o api-server ./cmd/api
+
+  lint:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
@@ -29,21 +54,6 @@ jobs:
         uses: golangci/golangci-lint-action@v4
         with:
           args: --config .golangci.yml
-
-      - name: Run tests with coverage
-        run: go test -v -coverprofile=coverage.out ./...
-
-      - name: Upload coverage artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-${{ matrix.go-version }}
-          path: coverage.out
-
-      - name: Build
-        run: go build -o api-server ./cmd/api
-
-  # TODO: Add lint job using golangci-lint
-  # Hint: Use the golangci/golangci-lint-action@v4 action
 
   docker-build:
     runs-on: ubuntu-latest
