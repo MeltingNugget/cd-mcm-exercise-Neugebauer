@@ -74,12 +74,23 @@ jobs:
 
   sonarqube:
     runs-on: ubuntu-latest
+    needs: test
+
     steps:
     - uses: actions/checkout@v6
       with:
         # Disabling shallow clones is recommended for improving the relevancy of reporting
         fetch-depth: 0
+
+    - name: Download All Artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: all-coverage
+
     - name: SonarQube Scan
       uses: SonarSource/sonarqube-scan-action@v8 # Ex: v4.1.0 or sha1, See the latest version at https://github.com/marketplace/actions/official-sonarqube-scan
+      with:
+          args: >
+            -Dsonar.go.coverage.reportPaths=all-coverage/**/*.out
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
