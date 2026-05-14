@@ -88,9 +88,6 @@ jobs:
       with:
         path: all-coverage
 
-    - name: Debug files
-      run: find .
-
     - name: SonarQube Scan
       uses: SonarSource/sonarqube-scan-action@v8 # Ex: v4.1.0 or sha1, See the latest version at https://github.com/marketplace/actions/official-sonarqube-scan
       with:
