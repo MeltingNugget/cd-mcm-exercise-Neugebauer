@@ -31,7 +31,7 @@ jobs:
       - name: Upload coverage artifact
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-${{ matrix.go-version }}
+          name: coverage-${{ matrix.go-version }}-${{ matrix.os }}
           path: coverage.out
 
       - name: Build
@@ -72,6 +72,14 @@ jobs:
           push: false
           tags: product-catalog:${{ github.sha }}
 
-  # TODO: Add sonarcloud job
-  # Hint: Use the SonarSource/sonarqube-scan-action or sonarcloud-github-action
-  # You will need to configure sonar-project.properties
+  sonarqube:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v6
+      with:
+        # Disabling shallow clones is recommended for improving the relevancy of reporting
+        fetch-depth: 0
+    - name: SonarQube Scan
+      uses: SonarSource/sonarqube-scan-action@8 # Ex: v4.1.0 or sha1, See the latest version at https://github.com/marketplace/actions/official-sonarqube-scan
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
