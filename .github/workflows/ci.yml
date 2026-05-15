@@ -64,6 +64,15 @@ jobs:
           name: coverage-${{ matrix.go-version }}-${{ matrix.os }}
           path: coverage.out
 
+      - name: Generate HTML report as well
+        run: go tool cover -html=coverage.out -o coverage.html
+
+      - name: Upload HTML artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: coverage-html-${{ matrix.go-version }}-${{ matrix.os }}
+          path: coverage.html
+
       - name: Build
         run: go build -o api-server ./cmd/api
 
