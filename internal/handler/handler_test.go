@@ -180,3 +180,37 @@ func TestPayloadNegativePrice(t *testing.T) {
 		t.Errorf("expected 404, got %d", rr.Code)
 	}
 }
+
+// Test invalid JSON payload for CreateProduct
+func TestCreateInvalidJSON(t *testing.T) {
+	r, _ := setupRouter()
+	req := httptest.NewRequest("POST", "/products", strings.NewReader("{invalid-json"))
+	rr := httptest.NewRecorder()
+	r.ServeHTTP(rr, req)
+	if rr.Code != http.StatusBadRequest {
+		t.Fatalf("expected 400, got %d", rr.Code)
+	}
+}
+
+// Test Update non-existent product returns NotFound
+func TestUpdateNonExistent(t *testing.T) {
+	r, _ := setupRouter()
+	body := `{"name":"Nope","price":1}`
+	req := httptest.NewRequest("PUT", "/products/9999", strings.NewReader(body))
+	rr := httptest.NewRecorder()
+	r.ServeHTTP(rr, req)
+	if rr.Code != http.StatusNotFound {
+		t.Fatalf("expected 404, got %d", rr.Code)
+	}
+}
+
+// Test Delete non-existent product returns NotFound
+func TestDeleteNonExistent(t *testing.T) {
+	r, _ := setupRouter()
+	req := httptest.NewRequest("DELETE", "/products/9999", nil)
+	rr := httptest.NewRecorder()
+	r.ServeHTTP(rr, req)
+	if rr.Code != http.StatusNotFound {
+		t.Fatalf("expected 404, got %d", rr.Code)
+	}
+}

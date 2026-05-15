@@ -11,15 +11,15 @@ import (
 	"github.com/mrckurz/CI-CD-MCM/internal/store"
 )
 
-func main() {
+var listenAndServe = http.ListenAndServe
+
+func run() error {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}
 
 	r := mux.NewRouter()
-
-	// Use PostgreSQL if DB_HOST is set, otherwise fall back to in-memory store
 	dbHost := os.Getenv("DB_HOST")
 	if dbHost != "" {
 		pgStore, err := store.NewPostgresStore(
@@ -48,7 +48,11 @@ func main() {
 		fmt.Printf("Product Catalog API (in-memory) listening on :%s\n", port)
 	}
 
-	if err := http.ListenAndServe(":"+port, r); err != nil {
+	return listenAndServe(":"+port, r)
+}
+
+func main() {
+	if err := run(); err != nil {
 		log.Fatalf("Server failed: %v", err)
 	}
 }
