@@ -253,3 +253,19 @@ func TestPostgresStoreCRUD(t *testing.T) {
 		t.Fatalf("expected ErrNotFound deleting missing product, got %v", err)
 	}
 }
+
+func TestNewPostgresStore_InvalidHost(t *testing.T) {
+	// Ping schlägt fehl → return nil, err (Zeile 26-28)
+	_, err := NewPostgresStore("invalidhost", "5432", "catalog", "catalog123", "productcatalog")
+	if err == nil {
+		t.Fatal("expected error for invalid host, got nil")
+	}
+}
+
+func TestNewPostgresStore_InvalidCredentials(t *testing.T) {
+	// sql.Open schlägt nicht fehl, aber Ping schlägt fehl → Zeile 23-25
+	_, err := NewPostgresStore("localhost", "5432", "wronguser", "wrongpassword", "productcatalog")
+	if err == nil {
+		t.Fatal("expected error for invalid credentials, got nil")
+	}
+}
