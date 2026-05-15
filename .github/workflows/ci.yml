@@ -13,6 +13,21 @@ jobs:
       matrix:
         go-version: ["1.26"]
         os: [ubuntu-latest]
+    
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: catalog
+          POSTGRES_PASSWORD: catalog123
+          POSTGRES_DB: productcatalog
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.0.0
@@ -28,11 +43,25 @@ jobs:
       - name: Run tests with coverage
         run: go test -v -coverprofile=coverage.out ./...
 
+      - name: Run postgres integration tests with coverage
+        run: go test -v -tags integration -coverprofile=coverage-postgres.out ./...
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_USER: catalog
+          DB_PASSWORD: catalog123
+          DB_NAME: productcatalog
+
+      - name: Merge coverage profiles
+        run: |
+          cat coverage.out > merged-coverage.out
+          tail -n +2 coverage-postgres.out >> merged-coverage.out
+
       - name: Upload coverage artifact
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: coverage-${{ matrix.go-version }}-${{ matrix.os }}
-          path: coverage.out
+          path: merged-coverage.out
 
       - name: Build
         run: go build -o api-server ./cmd/api
@@ -89,12 +118,12 @@ jobs:
         path: all-coverage
 
     - name: Print coverage
-      run: cat all-coverage/coverage-1.26-ubuntu-latest/coverage.out
+      run: cat all-coverage/coverage-1.26-ubuntu-latest/merged-coverage.out
 
     - name: SonarQube Scan
       uses: SonarSource/sonarqube-scan-action@59db25f34e16620e48ab4bb9e4a5dce155cb5432 # v8.0.0
       with:
           args: >
-            -Dsonar.go.coverage.reportPaths=all-coverage/coverage-1.26-ubuntu-latest/coverage.out
+            -Dsonar.go.coverage.reportPaths=all-coverage/coverage-1.26-ubuntu-latest/merged-coverage.out
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
