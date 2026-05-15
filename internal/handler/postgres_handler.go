@@ -10,6 +10,8 @@ import (
 	"github.com/mrckurz/CI-CD-MCM/internal/store"
 )
 
+const productByIDRoute = "/products/{id:[0-9]+}"
+
 // PostgresHandler holds the dependencies for PostgreSQL-backed HTTP handlers.
 type PostgresHandler struct {
 	Store *store.PostgresStore
@@ -25,9 +27,9 @@ func (h *PostgresHandler) RegisterRoutes(r *mux.Router) {
 	r.HandleFunc("/health", h.Health).Methods("GET")
 	r.HandleFunc("/products", h.GetProducts).Methods("GET")
 	r.HandleFunc("/products", h.CreateProduct).Methods("POST")
-	r.HandleFunc("/products/{id:[0-9]+}", h.GetProduct).Methods("GET")
-	r.HandleFunc("/products/{id:[0-9]+}", h.UpdateProduct).Methods("PUT")
-	r.HandleFunc("/products/{id:[0-9]+}", h.DeleteProduct).Methods("DELETE")
+	r.HandleFunc(productByIDRoute, h.GetProduct).Methods("GET")
+	r.HandleFunc(productByIDRoute, h.UpdateProduct).Methods("PUT")
+	r.HandleFunc(productByIDRoute, h.DeleteProduct).Methods("DELETE")
 }
 
 func (h *PostgresHandler) Health(w http.ResponseWriter, r *http.Request) {
