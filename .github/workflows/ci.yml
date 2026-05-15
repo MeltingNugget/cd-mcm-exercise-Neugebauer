@@ -74,6 +74,7 @@ jobs:
 
 
   sonarqube:
+    if: matrix.os == 'ubuntu-latest' && matrix.go-version == '1.26'
     runs-on: ubuntu-latest
     needs: test
 
@@ -87,6 +88,9 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         path: all-coverage
+
+    - name: Print coverage
+      run: cat all-coverage/coverage-1.26-ubuntu-latest/coverage.out
 
     - name: SonarQube Scan
       uses: SonarSource/sonarqube-scan-action@v8 # Ex: v4.1.0 or sha1, See the latest version at https://github.com/marketplace/actions/official-sonarqube-scan
