@@ -11,18 +11,55 @@ import (
 	"github.com/mrckurz/CI-CD-MCM/internal/store"
 )
 
-func main() {
+var listenAndServe = http.ListenAndServe
+
+func run() error {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}
 
-	s := store.NewMemoryStore()
-	h := handler.NewHandler(s)
-
 	r := mux.NewRouter()
-	h.RegisterRoutes(r)
+	dbHost := os.Getenv("DB_HOST")
+	if dbHost != "" {
+		pgStore, err := store.NewPostgresStore(
+			dbHost,
+			getEnv("DB_PORT", "5432"),
+			getEnv("DB_USER", "catalog"),
+			getEnv("DB_PASSWORD", "catalog123"),
+			getEnv("DB_NAME", "productcatalog"),
+		)
+		if err != nil {
+			return fmt.Errorf("failed to connect to database: %w", err)
+		}
 
-	fmt.Printf("Product Catalog API listening on :%s\n", port)
-	log.Fatal(http.ListenAndServe(":"+port, r))
+		if err := pgStore.EnsureTable(); err != nil {
+			pgStore.DB.Close()
+			return fmt.Errorf("failed to create table: %w", err)
+		}
+
+		h := handler.NewPostgresHandler(pgStore)
+		h.RegisterRoutes(r)
+		fmt.Printf("Product Catalog API (PostgreSQL) listening on :%s\n", port)
+	} else {
+		memStore := store.NewMemoryStore()
+		h := handler.NewHandler(memStore)
+		h.RegisterRoutes(r)
+		fmt.Printf("Product Catalog API (in-memory) listening on :%s\n", port)
+	}
+
+	return listenAndServe(":"+port, r)
+}
+
+func main() {
+	if err := run(); err != nil {
+		log.Fatalf("Server failed: %v", err)
+	}
+}
+
+func getEnv(key, fallback string) string {
+	if v := os.Getenv(key); v != "" {
+		return v
+	}
+	return fallback
 }
