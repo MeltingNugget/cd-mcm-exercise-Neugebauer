@@ -30,13 +30,11 @@ func run() error {
 			getEnv("DB_NAME", "productcatalog"),
 		)
 		if err != nil {
-			log.Fatalf("Failed to connect to database: %v", err)
 			return fmt.Errorf("failed to connect to database: %w", err)
 		}
 
 		if err := pgStore.EnsureTable(); err != nil {
 			pgStore.DB.Close()
-			log.Fatalf("Failed to create table: %v", err)
 			return fmt.Errorf("failed to create table: %w", err)
 		}
 
