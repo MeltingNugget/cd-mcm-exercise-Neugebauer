@@ -42,10 +42,22 @@ func (c *fakeConn) Prepare(query string) (driver.Stmt, error) {
 	return &fakeStmt{query: query}, nil
 }
 
-func (c *fakeConn) Close() error { return nil }
-func (c *fakeConn) Begin() (driver.Tx, error) { return nil, errors.New("not supported") }
-func (c *fakeConn) Ping(ctx context.Context) error { return nil }
-func (c *fakeConn) CheckNamedValue(nv *driver.NamedValue) error { return nil }
+func (c *fakeConn) Close() error {
+	return nil
+}
+
+func (c *fakeConn) Begin() (driver.Tx, error) {
+	return nil, errors.New("not supported")
+}
+
+func (c *fakeConn) Ping(ctx context.Context) error {
+	return nil
+}
+
+func (c *fakeConn) CheckNamedValue(nv *driver.NamedValue) error {
+	return nil
+}
+
 func (c *fakeConn) PrepareContext(ctx context.Context, query string) (driver.Stmt, error) {
 	return &fakeStmt{query: query}, nil
 }
@@ -58,7 +70,7 @@ func (c *fakeConn) ExecContext(ctx context.Context, query string, args []driver.
 	return fakeExec(strings.TrimSpace(query), args)
 }
 
-func (s *fakeStmt) Close() error { return nil }
+func (s *fakeStmt) Close() error  { return nil }
 func (s *fakeStmt) NumInput() int { return -1 }
 func (s *fakeStmt) Exec(args []driver.Value) (driver.Result, error) {
 	named := make([]driver.NamedValue, len(args))
@@ -146,14 +158,12 @@ func argAsInt64(arg driver.NamedValue, fallback int64) int64 {
 }
 
 func (r *fakeRows) Columns() []string { return r.cols }
-func (r *fakeRows) Close() error { return nil }
+func (r *fakeRows) Close() error      { return nil }
 func (r *fakeRows) Next(dest []driver.Value) error {
 	if r.pos >= len(r.rows) {
 		return io.EOF
 	}
-	for i := range r.rows[r.pos] {
-		dest[i] = r.rows[r.pos][i]
-	}
+	copy(dest, r.rows[r.pos])
 	r.pos++
 	return nil
 }

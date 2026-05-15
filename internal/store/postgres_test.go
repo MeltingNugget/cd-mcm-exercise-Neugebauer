@@ -180,9 +180,7 @@ func (r *fakeRows) Next(dest []driver.Value) error {
 		return io.EOF
 	}
 	row := r.rows[r.pos]
-	for i := range row {
-		dest[i] = row[i]
-	}
+	copy(dest, row)
 	r.pos++
 	return nil
 }
